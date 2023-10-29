@@ -9,7 +9,8 @@ module.exports.getUsers = (req, res) => {
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
-module.exports.getUsersId = (req, res, next) => {
+module.exports.getUsersId = (req, res) => {
+  const ERROR_CODE = 400;
   User.findById(req.params._id)
     .then((user) => {
       if (!user) {
@@ -19,11 +20,7 @@ module.exports.getUsersId = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new ValidationError('Некорректный id пользователя'));
-      }
-
-      return next(err);
+      if (err.name === 'CastError') return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при поиске пользователя' });
     });
 };
 
@@ -61,6 +58,7 @@ module.exports.updateProfile = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => res.status(500).send({ message: err.message }));
 };
+
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
   const userId = req.user._id;

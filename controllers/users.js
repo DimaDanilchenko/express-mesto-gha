@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 const User = require('../models/user');
 const NotFoundErrors = require('../errors/NotFoundError');
+const BadRequestError = require('../errors/BadRequestError');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -16,7 +17,9 @@ module.exports.getUsersId = (req, res) => {
     })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при создании пользователя' });
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при поиске пользователя' });
+      }
     });
 };
 

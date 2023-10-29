@@ -1,7 +1,6 @@
 /* eslint-disable consistent-return */
 const User = require('../models/user');
 const NotFoundErrors = require('../errors/NotFoundError');
-const BadRequestError = require('../errors/BadRequestError');
 
 module.exports.getUsers = (req, res) => {
   User.find({})

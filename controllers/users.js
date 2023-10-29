@@ -48,32 +48,15 @@ module.exports.createUser = (req, res) => {
 };
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
-  const userId = req.user._id;
-  User.findByIdAndUpdate(
-    userId,
-    { name, about },
-    // Передадим объект опций:
-    {
-      new: true, // обработчик then получит на вход обновлённую запись
-      runValidators: true, // данные будут валидированы перед изменением
-    },
-  )
-    .then((user) => res.send(user))
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .then((user) => res.send({ data: user }))
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
   const userId = req.user._id;
-  User.findByIdAndUpdate(
-    userId,
-    { avatar },
-    // Передадим объект опций:
-    {
-      new: true, // обработчик then получит на вход обновлённую запись
-      runValidators: true, // данные будут валидированы перед изменением
-    },
-  )
+  User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => res.status(500).send({ message: err.message }));
 };

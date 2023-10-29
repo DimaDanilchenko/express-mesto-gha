@@ -1,5 +1,4 @@
 const Card = require('../models/card');
-const NotFoundError = require('../errors/NotFoundError');
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -18,9 +17,6 @@ module.exports.getCards = (req, res) => {
 };
 module.exports.delCardId = (req, res) => {
   Card.findByIdAndRemove(req.params._id)
-    .orFail(() => {
-      throw new NotFoundError('Произошла ошибка валидации');
-    })
     .then((user) => res.send(user))
     .catch((err) => res.status(500).send({ message: err.message }));
 };

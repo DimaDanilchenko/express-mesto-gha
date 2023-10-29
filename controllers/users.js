@@ -1,4 +1,6 @@
+/* eslint-disable consistent-return */
 const User = require('../models/user');
+const BadRequestError = require('../errors/BadRequestError');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -13,6 +15,7 @@ module.exports.getUsersId = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
+  const ERROR_CODE = 400;
   const {
     name, about, avatar, _id,
   } = req.body;
@@ -26,7 +29,9 @@ module.exports.createUser = (req, res) => {
       about: user.about,
       avatar: user.avatar,
     }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при создании пользователя' });
+    });
 };
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;

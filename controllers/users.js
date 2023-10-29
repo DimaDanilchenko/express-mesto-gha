@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 const User = require('../models/user');
 const NotFoundErrors = require('../errors/NotFoundError');
+const ValidationError = require('../errors/BadRequestError');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -8,17 +9,21 @@ module.exports.getUsers = (req, res) => {
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
-module.exports.getUsersId = (req, res) => {
-  const ERROR_CODE = 400;
-  User.findById(req.params._id)
-    .orFail(() => {
-      throw new NotFoundErrors('Пользователь с таким ID не найден');
+module.exports.getUsersId = (req, res, next) => {
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundErrors('Пользователь не найден');
+      }
+
+      res.send({ data: user });
     })
-    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при поиске пользователя' });
+        return next(new ValidationError('Некорректный id пользователя'));
       }
+
+      return next(err);
     });
 };
 

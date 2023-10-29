@@ -2,7 +2,7 @@ const Card = require('../models/card');
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  const owner = req.user._id;
+  const owner = req.params._id;
 
   Card.create({ name, link, owner })
     .then((card) => res.send(card))
@@ -24,7 +24,7 @@ module.exports.delCardId = (req, res) => {
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params._id,
-    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+    { $addToSet: { likes: req.params._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
     .then((like) => res.send(like))
@@ -34,7 +34,7 @@ module.exports.likeCard = (req, res) => {
 module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params._id,
-    { $pull: { likes: req.user._id } }, // убрать _id из массива
+    { $pull: { likes: req.params._id } }, // убрать _id из массива
     { new: true },
   )
     .then((like) => res.send(like))

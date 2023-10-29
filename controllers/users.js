@@ -7,12 +7,18 @@ module.exports.getUsers = (req, res) => {
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
-module.exports.getUsersId = (req, res) => {
+module.exports.getUsersId = (req, res, next) => {
   const ERROR_CODE = 400;
-  User.findById(req.params._id)
-    .then((user) => res.send(user))
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(ERROR_CODE).send({ message: 'Пользователь не найден' });
+      }
+      res.send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при создании пользователя' });
+      return next(err);
     });
 };
 

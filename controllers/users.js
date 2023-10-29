@@ -1,6 +1,5 @@
 /* eslint-disable consistent-return */
 const User = require('../models/user');
-const NotFoundError = require('../errors/NotFoundError');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -11,9 +10,6 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUsersId = (req, res) => {
   const ERROR_CODE = 400;
   User.findById(req.params._id)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь с таким ID не найден');
-    })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при создании пользователя' });

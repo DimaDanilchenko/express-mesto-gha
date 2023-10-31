@@ -1,21 +1,20 @@
 const Card = require('../models/card');
-const ValidationError = require('../errors/ValidationError');
-const NotFoundError = require('../errors/NotFoundError');
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
-  const owner = req.user._id;
-  Card.create({ name, link, owner })
-    .then((newCard) => {
-      if (!newCard) {
-        return next(new NotFoundError('Объект не найден'));
-      }
-      return res.send({ data: newCard });
-    })
+  const ownerId = req.user._id;
+  Card.create({ name, link, owner: ownerId })
+    .then((newCard) => res.send({ data: newCard }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError('Переданы некорректные данные'));
-      } next(err);
+        res.status(400).send({ message: 'переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
+      } else if (err.name === 'DocumentNotFoundError') {
+        res.status(404).send({ message: 'карточка или пользователь не найден.' });
+      } else if (err.status === 500) {
+        res.status(500).send({ message: 'на сервере произошла ошибка.' });
+      } else {
+        next(err);
+      }
     });
 };
 

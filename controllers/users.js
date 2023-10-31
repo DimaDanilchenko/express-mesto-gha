@@ -19,6 +19,8 @@ module.exports.getUsersId = (req, res, next) => {
         res.status(400).send({ message: 'переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
       } else if (err.name === 'DocumentNotFoundError') {
         res.status(404).send({ message: 'карточка или пользователь не найден.' });
+      } else if (err.status === 500) {
+        res.status(500).send({ message: 'на сервере произошла ошибка.' });
       } else {
         next(err);
       }
@@ -44,14 +46,24 @@ module.exports.createUser = (req, res) => {
       if (err.name === 'ValidationError') return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при создании пользователя' });
     });
 };
-module.exports.updateProfile = (req, res) => {
+module.exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;
   const userId = req.user._id;
   User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
     .then((users) => {
       res.send({ data: users });
     })
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
+      } else if (err.name === 'DocumentNotFoundError') {
+        res.status(404).send({ message: 'карточка или пользователь не найден.' });
+      } else if (err.status === 500) {
+        res.status(500).send({ message: 'на сервере произошла ошибка.' });
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.updateAvatar = (req, res) => {

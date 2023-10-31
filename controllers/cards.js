@@ -47,9 +47,9 @@ module.exports.likeCard = (req, res, next) => {
   )
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
-      } else if (err.name === 'CastError') {
+      } else if (err.status === 404) {
         res.status(404).send({ message: 'карточка или пользователь не найден.' });
       } else if (err.status === 500) {
         res.status(500).send({ message: 'на сервере произошла ошибка.' });
@@ -67,7 +67,7 @@ module.exports.dislikeCard = (req, res, next) => {
   )
     .then((like) => res.send(like))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.status === 400) {
         res.status(400).send({ message: 'переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
       } else if (err.name === 'CastError') {
         res.status(404).send({ message: 'карточка или пользователь не найден.' });

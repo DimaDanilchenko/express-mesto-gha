@@ -75,7 +75,7 @@ module.exports.dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
-      } else if (err.status === 404) {
+      } else if (err.status === 'DocumentNotFoundError') {
         res.status(404).send({ message: 'карточка или пользователь не найден.' });
       } else if (err.status === 500) {
         res.status(500).send({ message: 'на сервере произошла ошибка.' });

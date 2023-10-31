@@ -1,7 +1,5 @@
 /* eslint-disable consistent-return */
 const User = require('../models/user');
-const NotFoundErrors = require('../errors/NotFoundError');
-const ValidationError = require('../errors/BadRequestError');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -10,20 +8,20 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUsersId = (req, res, next) => {
-  User.findById(req.user._id)
+  const userId = req.params;
+  User.findById(userId)
+    .orFail()
     .then((user) => {
-      if (!user) {
-        throw new NotFoundErrors('Пользователь не найден');
-      }
-
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(new ValidationError('Некорректный id пользователя'));
+        res.status(400).send({ message: 'переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
+      } else if (err.name === 'DocumentNotFoundError') {
+        res.status(404).send({ message: 'карточка или пользователь не найден.' });
+      } else {
+        next(err);
       }
-
-      return next(err);
     });
 };
 

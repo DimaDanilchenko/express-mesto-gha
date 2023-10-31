@@ -10,7 +10,7 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUsersId = (req, res, next) => {
-  User.findById(req.params._id)
+  User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         throw new NotFoundErrors('Пользователь не найден');
@@ -48,15 +48,17 @@ module.exports.createUser = (req, res) => {
 };
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
-  const userId = req.params._id;
+  const userId = req.user._id;
   User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
-    .then((users) => res.send({ data: users }))
+    .then((users) => {
+      res.send({ data: users });
+    })
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  const userId = req.params._id;
+  const userId = req.user._id;
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));

@@ -1,4 +1,5 @@
 const Card = require('../models/card');
+const NotFoundErrors = require('../errors/NotFoundError');
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -45,6 +46,9 @@ module.exports.likeCard = (req, res, next) => {
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
   )
+    .orFail(() => {
+      throw new NotFoundErrors('Карточка с таким ID не найдена');
+    })
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -65,6 +69,9 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
+    .orFail(() => {
+      throw new NotFoundErrors('Карточка с таким ID не найдена');
+    })
     .then((like) => res.send(like))
     .catch((err) => {
       if (err.status === 400) {

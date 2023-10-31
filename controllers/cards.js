@@ -6,19 +6,19 @@ module.exports.createCard = (req, res) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.send(card))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
   // console.log(req.user._id); // _id станет доступен
 };
 module.exports.delCardId = (req, res) => {
   Card.findByIdAndRemove(req.params._id)
     .then((user) => res.send(user))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
 module.exports.likeCard = (req, res) => {
@@ -28,7 +28,7 @@ module.exports.likeCard = (req, res) => {
     { new: true },
   )
     .then((like) => res.send(like))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
 module.exports.dislikeCard = (req, res) => {
@@ -38,5 +38,5 @@ module.exports.dislikeCard = (req, res) => {
     { new: true },
   )
     .then((like) => res.send(like))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };

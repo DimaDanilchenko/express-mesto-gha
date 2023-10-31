@@ -29,14 +29,26 @@ module.exports.delCardId = (req, res) => {
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
+  const userId = req.user._id;
+  const { cardId } = req.params;
   Card.findByIdAndUpdate(
-    req.user._id,
-    { $addToSet: { likes: req.params._id } }, // добавить _id в массив, если его там нет
+    cardId,
+    { $addToSet: { likes: userId } }, // добавить _id в массив, если его там нет
     { new: true },
   )
     .then((like) => res.send(like))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
+      } else if (err.name === 'DocumentNotFoundError') {
+        res.status(404).send({ message: 'карточка или пользователь не найден.' });
+      } else if (err.status === 500) {
+        res.status(500).send({ message: 'на сервере произошла ошибка.' });
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.dislikeCard = (req, res) => {

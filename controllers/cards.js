@@ -42,12 +42,13 @@ module.exports.delCardId = (req, res, next) => {
 module.exports.likeCard = (req, res, next) => {
   const userId = req.user._id;
   const { cardId } = req.params.cardId;
+  console.log(req.params.cardId);
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: userId } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then((like) => res.send(like))
+    .then((cards) => res.send({ data: cards }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
@@ -63,7 +64,7 @@ module.exports.likeCard = (req, res, next) => {
 
 module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params._id,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )

@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const NotFoundErrors = require('../errors/NotFoundError');
+const NotFoundError = require('../errors/NotFoundError');
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -46,7 +46,7 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
   )
     .orFail(() => {
-      throw new NotFoundErrors('Карточка с таким ID не найдена');
+      throw new NotFoundError('Карточка с таким ID не найдена');
     })
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
@@ -69,7 +69,7 @@ module.exports.dislikeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      throw new NotFoundErrors('Карточка с таким ID не найдена');
+      throw new NotFoundError('Карточка с таким ID не найдена');
     })
     .then((like) => res.send(like))
     .catch((err) => {

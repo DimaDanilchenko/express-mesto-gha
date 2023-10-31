@@ -63,7 +63,7 @@ module.exports.likeCard = (req, res, next) => {
 };
 
 module.exports.dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
+  Card.findByIdAndRemove(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
@@ -71,7 +71,7 @@ module.exports.dislikeCard = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Карточка с таким ID не найдена');
     })
-    .then((like) => res.send(like))
+    .then((cards) => res.send({ data: cards }))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });

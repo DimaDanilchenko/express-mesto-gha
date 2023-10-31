@@ -23,10 +23,20 @@ module.exports.getCards = (req, res) => {
     .then((cards) => res.send({ data: cards }))
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
-module.exports.delCardId = (req, res) => {
+module.exports.delCardId = (req, res, next) => {
   Card.findByIdAndRemove(req.user._id)
     .then((user) => res.send(user))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля' });
+      } else if (err.name === 'DocumentNotFoundError') {
+        res.status(404).send({ message: 'карточка или пользователь не найден.' });
+      } else if (err.status === 500) {
+        res.status(500).send({ message: 'на сервере произошла ошибка.' });
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.likeCard = (req, res, next) => {

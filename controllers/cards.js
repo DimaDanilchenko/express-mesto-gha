@@ -40,13 +40,10 @@ module.exports.delCardId = (req, res, next) => {
 };
 
 module.exports.likeCard = (req, res, next) => {
-  const userId = req.user._id;
-  const { cardId } = req.params.cardId;
   console.log(req.params.cardId);
   Card.findByIdAndUpdate(
-    cardId,
-    { $addToSet: { likes: userId } }, // добавить _id в массив, если его там нет
-    { new: true },
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
   )
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
@@ -64,7 +61,7 @@ module.exports.likeCard = (req, res, next) => {
 
 module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params._id,
+    req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )

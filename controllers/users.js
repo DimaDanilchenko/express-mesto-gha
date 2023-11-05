@@ -88,9 +88,9 @@ module.exports.login = (req, res) => {
       // вернём токен
       res.send({ token });
     })
-    .catch((err) => {
+    .catch(() => {
       res
         .status(401)
-        .send({ message: err.message });
+        .send({ message: 'На сервере произошла ошибка' });
     });
 };

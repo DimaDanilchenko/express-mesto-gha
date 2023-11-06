@@ -38,6 +38,7 @@ module.exports.createUser = (req, res) => {
     // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === 'ValidationError') return res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при создании пользователя' });
+      if (err.code === 11000) return res.status(409).send({ message: 'Такой пользователь уже существует' });
     });
 };
 module.exports.getProfile = (req, res, next) => {

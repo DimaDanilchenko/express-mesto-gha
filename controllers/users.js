@@ -77,7 +77,7 @@ module.exports.updateAvatar = (req, res) => {
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -88,9 +88,5 @@ module.exports.login = (req, res) => {
       // вернём токен
       res.send({ token });
     })
-    .catch(() => {
-      res
-        .status(401)
-        .send({ message: 'На сервере произошла ошибка' });
-    });
+    .catch(next);
 };

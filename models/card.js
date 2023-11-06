@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+// eslint-disable-next-line import/no-extraneous-dependencies
+// eslint-disable-next-line no-useless-escape
+const regex = /^((ftp|http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/;
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -10,6 +13,11 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator(link) {
+        return link.match(regex);
+      },
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

@@ -16,7 +16,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(cors({
   origin: [
-    'http://dimadanilchenko.nomoredomainsmonster.ru/',
+    'http://dimadanilchenko.nomoredomainsmonster.ru/user/me',
     'https://dimadanilchenko.nomoredomainsmonster.ru',
     'http://localhost:3000',
     'http://localhost:3001',

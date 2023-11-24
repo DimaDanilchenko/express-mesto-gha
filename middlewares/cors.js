@@ -2,7 +2,9 @@
 /* eslint-disable linebreak-style */
 const allowedCors = [
   'http://dimadanilchenko.nomoredomainsmonster.ru/',
+  'http://api.dimadanilchenko.nomoredomainsmonster.ru/',
   'https://dimadanilchenko.nomoredomainsmonster.ru',
+  'https://api.dimadanilchenko.nomoredomainsmonster.ru/',
   'http://localhost:3000',
   'http://localhost:3001',
 ];
@@ -28,4 +30,4 @@ const cors = (req, res, next) => {
   next();
 };
 
-module.exports = cors;
+module.exports = { cors };

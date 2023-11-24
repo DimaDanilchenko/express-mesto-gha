@@ -18,6 +18,10 @@ app.use(cors({
   origin: '*',
 }));
 
+app.use(cors({
+  methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
+}));
+
 app.use(requestLogger);
 
 app.use(bodyParser.json());

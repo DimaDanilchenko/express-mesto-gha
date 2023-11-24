@@ -14,7 +14,23 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use(cors());
+const allowedCors = [
+  'http://dimadanilchenko.nomoredomainsmonster.ru',
+  'https://dimadanilchenko.nomoredomainsmonster.ru',
+  'https://api.dimadanilchenko.nomoredomainsmonster.ru',
+  'http://api.dimadanilchenko.nomoredomainsmonster.ru',
+  'http://localhost:3000',
+  'http://localhost:3001',
+];
+
+app.use((req, res, next) => {
+  const { origin } = req.headers;
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', '*');
+  }
+  next();
+});
+
 app.use(requestLogger);
 
 app.use(bodyParser.json());

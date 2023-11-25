@@ -43,9 +43,9 @@ module.exports.createUser = (req, res) => {
 };
 module.exports.getProfile = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь с таким ID не найден');
-    })
+    // .orFail(() => {
+    //   throw new NotFoundError('Пользователь с таким ID не найден');
+    // })
     .then((user) => res.send(user))
     .catch(next);
 };
@@ -86,6 +86,7 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        { expiresIn: '7d' },
       );
       // вернём токен
       res.send({ token });

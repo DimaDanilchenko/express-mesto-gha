@@ -1,5 +1,7 @@
+const { NODE_ENV, JWT_SECRET } = process.env;
 // eslint-disable-next-line import/no-extraneous-dependencies
 const jwt = require('jsonwebtoken');
+const SECRET_CODE = require('../utils/config');
 
 // eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
@@ -15,7 +17,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'some-secret-key');
+    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : SECRET_CODE);
   } catch (err) {
     return res
       .status(401)

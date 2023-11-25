@@ -50,7 +50,7 @@ module.exports.getProfile = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь по указанному id не найден');
       }
-      return res.status(200).send({ data: user });
+      return res.status(200).send(user);
     })
     .catch(next);
 };

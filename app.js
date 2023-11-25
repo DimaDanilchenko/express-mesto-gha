@@ -4,9 +4,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const bodyParser = require('body-parser');
-const cors = require('./middlewares/cors');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const { celebrate, Joi, errors } = require('celebrate');
+const cors = require('./middlewares/cors');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -16,10 +15,9 @@ const app = express();
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
+app.use(cors);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-app.use(cors);
 app.use(requestLogger);
 
 app.get('/crash-test', () => {

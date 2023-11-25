@@ -43,10 +43,15 @@ module.exports.createUser = (req, res) => {
 };
 module.exports.getProfile = (req, res, next) => {
   User.findById(req.user._id)
-    // .orFail(() => {
-    //   throw new NotFoundError('Пользователь с таким ID не найден');
-    // })
-    .then((user) => res.send(user))
+    .orFail(() => {
+      throw new NotFoundError('Пользователь с таким ID не найден');
+    })
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь по указанному id не найден');
+      }
+      return res.status(200).send({ data: user });
+    })
     .catch(next);
 };
 
@@ -81,6 +86,18 @@ module.exports.updateAvatar = (req, res) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Неправильные почта или пароль');
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new NotFoundError('Неправильные почта или пароль');
+          }
+          return user;
+        });
+    })
     .then((user) => {
       // создадим токен
       const token = jwt.sign(

@@ -1,6 +1,5 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
+/* eslint-disable linebreak-style */
 const winston = require('winston');
-// eslint-disable-next-line import/no-unresolved
 const expressWinston = require('express-winston');
 
 const requestLogger = expressWinston.logger({
@@ -10,7 +9,6 @@ const requestLogger = expressWinston.logger({
   format: winston.format.json(),
 });
 
-// логгер ошибок
 const errorLogger = expressWinston.errorLogger({
   transports: [
     new winston.transports.File({ filename: 'error.log' }),

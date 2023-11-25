@@ -79,32 +79,16 @@ module.exports.updateAvatar = (req, res) => {
 };
 
 module.exports.login = (req, res, next) => {
-  // const { email, password } = req.body;
-  // return User.findUserByCredentials(email, password)
-  //   .then((user) => {
-  //     // создадим токен
-  //     const token = jwt.sign(
-  //       { _id: user._id },
-  //       NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-  //     );
-  //     // вернём токен
-  //     res.send({ token });
-  //   })
-  //   .catch(next);
   const { email, password } = req.body;
-
-  User
-    .findUserByCredentials(email, password)
-    .then(({ _id: userId }) => {
-      if (userId) {
-        const token = jwt.sign(
-          { userId },
-          NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-          { expiresIn: '7d' },
-        );
-
-        return res.send({ token });
-      }
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      // создадим токен
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+      );
+      // вернём токен
+      res.send({ token });
     })
     .catch(next);
 };

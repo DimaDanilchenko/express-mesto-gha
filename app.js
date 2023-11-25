@@ -4,11 +4,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const bodyParser = require('body-parser');
+const cors = require('./middlewares/cors');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { celebrate, Joi, errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
-const cors = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;

@@ -4,28 +4,16 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { celebrate, Joi, errors } = require('celebrate');
-const cors = require('./middlewares/cors');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
-const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
-
-app.use(cors);
-
-app.use(requestLogger);
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -45,8 +33,6 @@ app.post('/signup', celebrate({
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
-app.use(errorLogger); // подключаем логгер ошибок
-
 app.use(errors());
 
 // eslint-disable-next-line no-unused-vars
@@ -64,6 +50,7 @@ app.use((err, req, res, next) => {
     });
 });
 
+// app.use(express.static(path.join(__dirname, 'public')));
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });

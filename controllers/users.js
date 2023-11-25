@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
+const ValidationError = require('../errors/ValidationError');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -42,12 +43,30 @@ module.exports.createUser = (req, res) => {
     });
 };
 module.exports.getProfile = (req, res, next) => {
-  User.findById(req.user._id)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь с таким ID не найден');
+  // User.findById(req.user._id)
+  //   .orFail(() => {
+  //     throw new NotFoundError('Пользователь с таким ID не найден');
+  //   })
+  //   .then((user) => res.send({ data: user}))
+  //   .catch(next);
+
+  const userId = req.params.userId ? req.params.userId : req.user._id;
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError(
+          'Пользователь по указанному id не найден.',
+        );
+      }
+      return res.send(user);
     })
-    .then((user) => res.send({ data: user}))
-    .catch(next);
+    .catch((err) => {
+      if (err.kind === 'ObjectId') {
+        next(new ValidationError('Некорректный формат id.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.updateProfile = (req, res, next) => {

@@ -42,7 +42,7 @@ module.exports.createUser = (req, res) => {
     });
 };
 module.exports.getProfile = (req, res, next) => {
-  User.findById(req.user._id)
+  User.findById(req.user)
     .orFail(() => {
       throw new NotFoundError('Пользователь с таким ID не найден');
     })

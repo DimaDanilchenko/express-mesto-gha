@@ -5,8 +5,8 @@ const allowedCors = [
   'http://api.dimadanilchenko.nomoredomainsmonster.ru/',
   'https://dimadanilchenko.nomoredomainsmonster.ru',
   'https://api.dimadanilchenko.nomoredomainsmonster.ru/',
-  'http://127.0.0.1:3000',
-  'http://127.0.0.1:3001',
+  'http://localhost:3000',
+  'http://localhost:3001',
 ];
 
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';

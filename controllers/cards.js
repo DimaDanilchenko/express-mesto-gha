@@ -21,7 +21,7 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => res.send(cards))
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 module.exports.delCardId = (req, res, next) => {

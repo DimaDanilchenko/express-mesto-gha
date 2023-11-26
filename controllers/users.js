@@ -1,10 +1,25 @@
-const { NODE_ENV, JWT_SECRET } = process.env;
 // eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findOne({ email }).select('+password')
+    .then((user) => {
+      // создадим токен
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+
+      // вернём токен
+      res.send({ token });
+    })
+    .catch(next);
+};
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -46,12 +61,7 @@ module.exports.getProfile = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь с таким ID не найден');
     })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь по указанному id не найден');
-      }
-      return res.status(200).send(user);
-    })
+    .then((user) => res.send(user))
     .catch(next);
 };
 
@@ -83,30 +93,4 @@ module.exports.updateAvatar = (req, res) => {
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
-module.exports.login = (req, res, next) => {
-  const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Неправильные почта или пароль');
-      }
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            throw new NotFoundError('Неправильные почта или пароль');
-          }
-          return user;
-        });
-    })
-    .then((user) => {
-      // создадим токен
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: '7d' },
-      );
-      // вернём токен
-      res.send({ token });
-    })
-    .catch(next);
-};
+

@@ -25,7 +25,7 @@ module.exports.getCards = (req, res) => {
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 module.exports.delCardId = (req, res, next) => {
-  Card.findByIdAndRemove(req.user._id)
+  Card.findByIdAndRemove(req.params.cardId)
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
